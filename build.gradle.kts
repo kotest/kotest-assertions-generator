@@ -44,6 +44,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
     implementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     implementation("io.kotest:kotest-property-jvm:$kotestVersion")
+    implementation("io.kotest:kotest-framework-datatest:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-console:4.1.3.2")
 }
 
