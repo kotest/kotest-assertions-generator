@@ -596,6 +596,39 @@ private val systemToTest = MyService(
 ```
 We can also provide a custom serializer for that class, as was described above.
 
+## Serializing property tests
+
+The following snippet shows how to serialize property tests into compilable Kotlin:
+```kotlin
+// create mutable state to save the generated code to
+val generator = DataRowGenerator()
+// run property tests
+forAll(
+    Exhaustive.collection(listOf(1L,2L)),
+    Exhaustive.collection(listOf(
+        LocalDate.of(2021, 1, 1), 
+        LocalDate.of(2022, 1, 1))
+    ),
+) { a, b ->
+    generator.addRow(a, b, b.atStartOfDay().plusMinutes(a))
+    true
+}
+// generator contains all the imports needed
+generator.exports() shouldContainExactlyInAnyOrder listOf(
+    "java.time.LocalDate",
+    "kotlin.Long",
+    "java.time.LocalDateTime"
+)
+// generator contains all the rows
+generator.rows() shouldContainExactlyInAnyOrder listOf(
+    "row(1L, LocalDate.of(2021, 1, 1), LocalDateTime.of(2021, 1, 1, 0, 1, 0, 0)),",
+    "row(1L, LocalDate.of(2022, 1, 1), LocalDateTime.of(2022, 1, 1, 0, 1, 0, 0)),",
+    "row(2L, LocalDate.of(2021, 1, 1), LocalDateTime.of(2021, 1, 1, 0, 2, 0, 0)),",
+    "row(2L, LocalDate.of(2022, 1, 1), LocalDateTime.of(2022, 1, 1, 0, 2, 0, 0)),",
+    )
+// now we can use the generated code in our tests
+```
+
 ### Limitations / TODO list
 
 The following cases are not supported at this time:
